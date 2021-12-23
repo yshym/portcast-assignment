@@ -1,0 +1,10 @@
+# python
+__pycache__/
+dist/
+
+# env
+.direnv
+.envrc
+
+# emacs
+flycheck_*.py

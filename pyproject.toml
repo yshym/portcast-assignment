@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "portcast-assignment"
+version = "0.1.0"
+description = ""
+authors = ["Yevhen Shymotiuk <yevhenshymotiuk@pm.me>"]
+
+[tool.poetry.dependencies]
+python = "3.7"
+prefect = "^0.15.11"
+Scrapy = "^2.5.1"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.930"
+pylint = "^2.12.2"
+ipython = "^7.30.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
