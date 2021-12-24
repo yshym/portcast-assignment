@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  redis:
+    container_name: pa_redis
+    image: redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+  producer:
+    container_name: pa_producer
+    build:
+      context: ..
+      dockerfile: ./docker/producer/Dockerfile
+    command: python3 producer.py
+    volumes:
+      - ..:/home/producer
+    depends_on:
+      - redis
+  consumer:
+    container_name: pa_consumer
+    build:
+      context: ..
+      dockerfile: ./docker/consumer/Dockerfile
+    command: python3 consumer.py
+    volumes:
+      - ..:/home/consumer
+    depends_on:
+      - producer
