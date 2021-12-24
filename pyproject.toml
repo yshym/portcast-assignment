@@ -5,14 +5,19 @@ description = ""
 authors = ["Yevhen Shymotiuk <yevhenshymotiuk@pm.me>"]
 
 [tool.poetry.dependencies]
-python = "3.7"
-prefect = "^0.15.11"
-Scrapy = "^2.5.1"
+python = "3.6.*"
+prefect = "0.15.11"
+Scrapy = "2.5.1"
+redis = "4.0.2"
 
 [tool.poetry.dev-dependencies]
-mypy = "^0.930"
-pylint = "^2.12.2"
-ipython = "^7.30.1"
+mypy = "0.930"
+pylint = "2.12.0"
+ipython = "7.16.2"
+types-redis = "4.0.5"
+
+[tool.mypy]
+ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
