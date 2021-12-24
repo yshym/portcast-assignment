@@ -1,8 +1,12 @@
 from operator import add
 from time import sleep
 
+from sqlmodel import Session
+
+from db import engine
+from db.models import SumResult
 from producer import Task
-from redis_.client import redis
+from redis_ import redis
 from redis_.queue_ import TaskQueue
 
 
@@ -16,5 +20,9 @@ if __name__ == "__main__":
         task_queue = TaskQueue("tasks", redis)
         task = task_queue.pop()
         res = execute_task(task)
-        print(res)
+        with Session(engine) as session:
+            sum_result = SumResult(result=res)
+            session.add(sum_result)
+            session.commit()
+            print(sum_result.result)
         sleep(5)

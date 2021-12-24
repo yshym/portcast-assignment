@@ -1,8 +1,8 @@
 from random import randrange
 from time import sleep
 
+from redis_ import redis
 from redis_.queue_ import TaskQueue
-from redis_.client import redis
 from redis_.task import Task
 
 

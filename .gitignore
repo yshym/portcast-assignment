@@ -4,6 +4,7 @@ dist/
 
 # env
 .direnv
+.env
 .envrc
 
 # emacs

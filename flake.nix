@@ -10,6 +10,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let pkgs = nixpkgs.legacyPackages.${system};
       in {
-        devShell = with pkgs; mkShell { buildInputs = [ poetry python36 ]; };
+        devShell = with pkgs;
+          mkShell { buildInputs = [ poetry postgresql python36 ]; };
       });
 }

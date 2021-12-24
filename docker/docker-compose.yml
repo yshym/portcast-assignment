@@ -25,7 +25,21 @@ services:
       context: ..
       dockerfile: ./docker/consumer/Dockerfile
     command: python3 consumer.py
+    env_file:
+      - ../.env
     volumes:
       - ..:/home/consumer
     depends_on:
       - producer
+  postgres:
+    container_name: pa_postgres
+    image: postgres
+    env_file:
+      - ../.env
+    ports:
+      - 5432:5432
+    volumes:
+      - pa_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  pa_postgres_data:
