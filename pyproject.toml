@@ -11,6 +11,7 @@ Scrapy = "^2.5.1"
 redis = "^4.0.2"
 sqlmodel = "^0.0.5"
 psycopg2 = "^2.9.2"
+selenium = "3.141.0"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.930"

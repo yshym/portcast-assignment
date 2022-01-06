@@ -11,6 +11,9 @@
       let pkgs = nixpkgs.legacyPackages.${system};
       in {
         devShell = with pkgs;
-          mkShell { buildInputs = [ poetry postgresql python36 ]; };
+          mkShell {
+            nativeBuildInputs =
+              [ chromedriver chromium poetry postgresql python36 ];
+          };
       });
 }
