@@ -1,0 +1,2 @@
+class SpiderFailedError(Exception):
+    pass

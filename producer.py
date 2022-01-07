@@ -34,7 +34,7 @@ def run():
 
 
 if __name__ == "__main__":
-    schedule = IntervalSchedule(interval=timedelta(seconds=15))
+    schedule = IntervalSchedule(interval=timedelta(minutes=4))
     with Flow("Producer", schedule) as flow:
         run()
     flow.run()

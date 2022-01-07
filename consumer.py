@@ -9,6 +9,7 @@ from database import get_db
 from database.models import Container, BOL
 from redis_ import redis
 from redis_.queue_ import TaskQueue
+from spiders import SpiderFailedError
 from spiders.shipments_spider import ShipmentsSpider
 
 
@@ -54,7 +55,7 @@ def process_data(db, data):
     return container_from_data(db, data)
 
 
-@prefect.task
+@prefect.task(max_retries=3, retry_delay=timedelta(seconds=10))
 def run():
     task_queue = TaskQueue("tasks", redis)
     task = task_queue.pop()
@@ -64,19 +65,17 @@ def run():
     if task.name != "scrape-shipment":
         raise UnknownTaskError(f"task '{task.name}' is not known")
     data = run_shipments_spider(task.args[0])
-    if data:
-        data = data[0]
-        db = next(get_db())
-        obj = process_data(db, data)
-        db.add(obj)
-        db.commit()
-        print(f"Task {task} succeeded")
-    else:
-        print(f"{task} failed")
+    if not data:
+        raise SpiderFailedError("spider failed to scrape data")
+    data = data[0]
+    db = next(get_db())
+    obj = process_data(db, data)
+    db.add(obj)
+    db.commit()
 
 
 if __name__ == "__main__":
-    schedule = IntervalSchedule(interval=timedelta(seconds=20))
+    schedule = IntervalSchedule(interval=timedelta(minutes=5))
     with Flow("Consumer", schedule) as flow:
         run()
     flow.run()
