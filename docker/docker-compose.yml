@@ -1,5 +1,11 @@
 version: "3.8"
 
+x-common-environment: &common-environment
+  POSTGRES_HOST: "postgres"
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: "postgres"
+  POSTGRES_DB: "shipments"
+
 services:
   redis:
     container_name: pa_redis
@@ -12,11 +18,7 @@ services:
   postgres:
     container_name: pa_postgres
     image: postgres
-    environment:
-      POSTGRES_HOST: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "shipments"
+    environment: *common-environment
     ports:
       - 5432:5432
     volumes:
@@ -37,8 +39,7 @@ services:
       context: ..
       dockerfile: ./docker/consumer/Dockerfile
     command: python3 consumer.py
-    env_file:
-      - ../.env
+    environment: *common-environment
     volumes:
       - ..:/home/consumer
     depends_on:
@@ -50,8 +51,7 @@ services:
       context: ..
       dockerfile: ./docker/api/Dockerfile
     command: uvicorn api:app --host 0.0.0.0 --port 8000
-    env_file:
-      - ../.env
+    environment: *common-environment
     volumes:
       - ..:/home/api
     ports:
