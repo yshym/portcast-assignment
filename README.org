@@ -2,31 +2,34 @@
 
 * Table of contents :TOC_2:
 - [[#usage][Usage]]
-- [[#services][Services]]
-  - [[#redis][Redis]]
-  - [[#postgres][Postgres]]
-  - [[#api][API]]
-  - [[#producer][Producer]]
-  - [[#consumer][Consumer]]
+- [[#description][Description]]
+  - [[#python][Python]]
+  - [[#services][Services]]
 - [[#deployment-diagram][Deployment diagram]]
 
 * Usage
 ~docker compose -f docker/docker-compose.yml up -d~
 
-* Services
-** Redis
+* Description
+Since this is just a test assignment the project is not ready for production use. Some decisions were made to simplify development/demonstration e.g.: docker volumes, docker port forwarding, disabled redis persistance etc.
+
+** Python
+Since one of the constraints was using Python 3.6 and [[https://azure.microsoft.com/en-us/updates/community-support-for-python-36-is-ending-on-23-december-2021/][Community support for Python 3.6 ended on 23 December 2021]] some dependencies are not up-to-date to be compatible with Python 3.6
+
+** Services
+*** Redis
 Task queue is implemented on top of Redis List data structure
 
-** Postgres
+*** Postgres
 Shipment data is stored in PostgreSQL database
 
-** API
+*** API
 API can be used to read shipment data from the database
 
-** Producer
+*** Producer
 Producer periodically pushes scraping tasks to the task queue
 
-** Consumer
+*** Consumer
 Consumer periodically pops a task from the task queue and executes it. In this case it scrapes shipment data based on number and saves it to the database
 
 * TODO Deployment diagram
