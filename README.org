@@ -5,7 +5,6 @@
 - [[#description][Description]]
   - [[#python][Python]]
   - [[#services][Services]]
-- [[#deployment-diagram][Deployment diagram]]
 
 * Usage
 ~docker compose -f docker/docker-compose.yml up -d~
@@ -32,4 +31,3 @@ Producer periodically pushes scraping tasks to the task queue
 *** Consumer
 Consumer periodically pops a task from the task queue and executes it. In this case it scrapes shipment data based on number and saves it to the database
 
-* TODO Deployment diagram
