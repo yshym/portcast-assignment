@@ -1,6 +1,7 @@
 from datetime import timedelta
 
-from prefect import task, Flow
+import prefect
+from prefect import Flow
 from prefect.schedules import IntervalSchedule
 from scrapyscript import Job, Processor
 
@@ -53,7 +54,7 @@ def process_data(db, data):
     return container_from_data(db, data)
 
 
-@task
+@prefect.task
 def run():
     task_queue = TaskQueue("tasks", redis)
     task = task_queue.pop()
@@ -76,6 +77,6 @@ def run():
 
 if __name__ == "__main__":
     schedule = IntervalSchedule(interval=timedelta(seconds=20))
-    with Flow("Task runner", schedule) as flow:
+    with Flow("Consumer", schedule) as flow:
         run()
     flow.run()
