@@ -1,12 +1,11 @@
 from datetime import timedelta
 
-from scrapyscript import Job, Processor
-from sqlmodel import Session
 from prefect import task, Flow
 from prefect.schedules import IntervalSchedule
+from scrapyscript import Job, Processor
 
-from db import engine
-from db.models import Container, BOL
+from database import get_db
+from database.models import Container, BOL
 from redis_ import redis
 from redis_.queue_ import TaskQueue
 from spiders.shipments_spider import ShipmentsSpider
@@ -22,24 +21,23 @@ def run_shipments_spider(number):
     return processor.run(job)
 
 
-def bol_from_data(session, data):
+def bol_from_data(db, data):
     container_numbers = data.pop("container_numbers")
-    bol = session.get(BOL, data["number"])
+    bol = db.get(BOL, data["number"])
     if bol:
         return bol
     bol = BOL(**data)
     for number in container_numbers:
-        container_data = run_shipments_spider(number)
-        if container_data:
-            container = container_from_data(session, container_data[0])
-            if container.bol_number != bol.number:
-                bol.containers.append(container)
+        data["number"] = number
+        container = container_from_data(db, data)
+        if container.bol_number != bol.number:
+            bol.containers.append(container)
     print(f"Processed BOL({bol})")
     return bol
 
 
-def container_from_data(session, data):
-    container = session.get(Container, data["number"])
+def container_from_data(db, data):
+    container = db.get(Container, data["number"])
     if container:
         return container
     container = Container(**data)
@@ -47,12 +45,12 @@ def container_from_data(session, data):
     return container
 
 
-def process_data(session, data):
+def process_data(db, data):
     data = {k: None if v == "" else v for k, v in data.items()}
     is_bol = "container_numbers" in data
     if is_bol:
-        return bol_from_data(session, data)
-    return container_from_data(session, data)
+        return bol_from_data(db, data)
+    return container_from_data(db, data)
 
 
 @task
@@ -67,17 +65,17 @@ def run():
     data = run_shipments_spider(task.args[0])
     if data:
         data = data[0]
-        with Session(engine) as session:
-            obj = process_data(session, data)
-            session.add(obj)
-            session.commit()
-            print(f"Task {task} succeeded")
+        db = next(get_db())
+        obj = process_data(db, data)
+        db.add(obj)
+        db.commit()
+        print(f"Task {task} succeeded")
     else:
         print(f"{task} failed")
 
 
 if __name__ == "__main__":
-    schedule = IntervalSchedule(interval=timedelta(minutes=5))
+    schedule = IntervalSchedule(interval=timedelta(seconds=20))
     with Flow("Task runner", schedule) as flow:
         run()
     flow.run()
