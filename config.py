@@ -1,7 +1,7 @@
-import os
+from os import getenv
 
 
-POSTGRES_HOST=os.getenv("POSTGRES_HOST")
-POSTGRES_USER=os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD=os.getenv("POSTGRES_PASSWORD")
-POSTGRES_DB=os.getenv("POSTGRES_DB")
+POSTGRES_HOST=getenv("POSTGRES_HOST", "postgres")
+POSTGRES_USER=getenv("POSTGRES_USER", "postgres")
+POSTGRES_PASSWORD=getenv("POSTGRES_PASSWORD", "postgres")
+POSTGRES_DB=getenv("POSTGRES_DB", "shipments")

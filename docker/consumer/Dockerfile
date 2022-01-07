@@ -7,6 +7,11 @@ WORKDIR /home/consumer
 
 COPY . /home/consumer/
 
+RUN apt-get update -y
+RUN apt-get upgrade -y
+
+RUN apt-get install -y chromium-driver chromium
+
 # Install poetry and its dependencies
 RUN pip install poetry \
     && poetry config virtualenvs.create false \

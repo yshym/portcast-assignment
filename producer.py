@@ -1,4 +1,3 @@
-from random import randrange
 from time import sleep
 
 from redis_ import redis
@@ -7,8 +6,19 @@ from redis_.task import Task
 
 
 if __name__ == "__main__":
-    while True:
+    numbers = [
+        # containers
+        "TGBU5600894",
+        "TRHU5131609",
+        # bills of lading
+        "MEDUJ1656290",
+        "MEDUJ1656241",
+        "MEDUM5024051",
+    ]
+
+    for number in numbers:
         task_queue = TaskQueue("tasks", redis)
-        x1, x2 = randrange(1, 11), randrange(1, 11)
-        task_queue.push(Task("sum", x1, x2))
-        sleep(3)
+        task = Task("scrape-shipment", number)
+        task_queue.push(task)
+        print(f"Added '{task}' to the queue")
+        sleep(4)

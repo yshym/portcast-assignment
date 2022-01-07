@@ -12,7 +12,7 @@ class RedisQueue:
         return self.redis.rpush(self.name, x)
 
     def pop(self):
-        return self.redis.blpop(self.name)
+        return self.redis.lpop(self.name)
 
 
 class TaskQueue(RedisQueue):
@@ -20,5 +20,7 @@ class TaskQueue(RedisQueue):
         return super().push(task.dumps())
 
     def pop(self):
-        _, s = super().pop()
+        s = super().pop()
+        if s is None:
+            return
         return Task.loads(s)

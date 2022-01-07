@@ -18,6 +18,8 @@ class ShipmentsSpider(scrapy.Spider):
     def __init__(self, number, *args, **kwargs):
         super().__init__(*args, **kwargs)
         chrome_options = chrome.options.Options()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--headless")
         self.driver = webdriver.Chrome(options=chrome_options)
         self.number = number
@@ -52,7 +54,6 @@ class ShipmentsSpider(scrapy.Spider):
         )
         body = self.driver.page_source
         url = self.driver.current_url
-        self.driver.close()
         return HtmlResponse(url, body=body, encoding="utf-8")
 
     def parse(self, response, *_args, **_kwargs):
@@ -79,7 +80,9 @@ class ShipmentsSpider(scrapy.Spider):
             .strip()
         )
         eta = (
-            container.css("[data-title='Price calculation date*'] > span::text")
+            container.css(
+                "[data-title='Price calculation date*'] > span::text"
+            )
             .get()
             .strip()
         )
@@ -115,3 +118,6 @@ class ShipmentsSpider(scrapy.Spider):
             "eta": eta,
             "container_numbers": container_numbers,
         }
+
+    def closed(self, reason):
+        self.driver.close()
