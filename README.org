@@ -1,4 +1,32 @@
 #+TITLE: Portcast Assignment
 
+* Table of contents :TOC_2:
+- [[#usage][Usage]]
+- [[#services][Services]]
+  - [[#redis][Redis]]
+  - [[#postgres][Postgres]]
+  - [[#api][API]]
+  - [[#producer][Producer]]
+  - [[#consumer][Consumer]]
+- [[#deployment-diagram][Deployment diagram]]
+
 * Usage
 ~docker compose -f docker/docker-compose.yml up -d~
+
+* Services
+** Redis
+Task queue is implemented on top of Redis List data structure
+
+** Postgres
+Shipment data is stored in PostgreSQL database
+
+** API
+API can be used to read shipment data from the database
+
+** Producer
+Producer periodically pushes scraping tasks to the task queue
+
+** Consumer
+Consumer periodically pops a task from the task queue and executes it. In this case it scrapes shipment data based on number and saves it to the database
+
+* TODO Deployment diagram
