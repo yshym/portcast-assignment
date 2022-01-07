@@ -9,6 +9,18 @@ services:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     ports:
       - 6379:6379
+  postgres:
+    container_name: pa_postgres
+    image: postgres
+    environment:
+      POSTGRES_HOST: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "shipments"
+    ports:
+      - 5432:5432
+    volumes:
+      - pa_postgres_data:/var/lib/postgresql/data
   producer:
     container_name: pa_producer
     build:
@@ -32,18 +44,20 @@ services:
     depends_on:
       - producer
       - postgres
-  postgres:
-    container_name: pa_postgres
-    image: postgres
-    environment:
-      POSTGRES_HOST: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "shipments"
-    ports:
-      - 5432:5432
+  api:
+    container_name: pa_api
+    build:
+      context: ..
+      dockerfile: ./docker/api/Dockerfile
+    command: uvicorn api:app --host 0.0.0.0 --port 8000
+    env_file:
+      - ../.env
     volumes:
-      - pa_postgres_data:/var/lib/postgresql/data
+      - ..:/home/api
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
 
 volumes:
   pa_postgres_data:
