@@ -23,14 +23,14 @@ def read_container(number: str, db: Session = Depends(get_db)):
     return container
 
 
-@app.get("/bols", response_model=List[Container])
+@app.get("/bols", response_model=List[BOL])
 def read_bols(db: Session = Depends(get_db)):
     return list(db.exec(select(BOL)))
 
 
-@app.get("/bols/{number}", response_model=Container)
+@app.get("/bols/{number}", response_model=BOL)
 def read_bol(number: str, db: Session = Depends(get_db)):
-    container = db.get(BOL, number)
-    if not container:
-        raise HTTPException(status_code=404, detail="container not found")
-    return container
+    bol = db.get(BOL, number)
+    if not bol:
+        raise HTTPException(status_code=404, detail="bol not found")
+    return bol
